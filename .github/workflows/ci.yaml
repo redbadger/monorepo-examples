@@ -52,6 +52,13 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
+      - uses: pnpm/action-setup@v2.2.2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.5.0
+        with:
+          cache: "pnpm"
+
       - name: Build
         shell: bash
         run: cd ${{ matrix.packages }} && make build
