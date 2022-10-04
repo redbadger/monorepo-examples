@@ -8,4 +8,4 @@ test: pnpm
 
 .PHONY: pnpm
 pnpm:
-	pnpm install --filter=.
+	pnpm install --filter=$(shell cat package.json | jq -r .name)...
