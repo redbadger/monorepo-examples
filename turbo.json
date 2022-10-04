@@ -10,7 +10,8 @@
         ".next/**",
         "target/**",
         "debug/**"
-      ]
+      ],
+      "env": ["OSTYPE"]
     },
     "lint": {
       "outputs": []
