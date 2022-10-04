@@ -12,4 +12,4 @@ dev: pnpm
 
 .PHONY: pnpm
 pnpm:
-	pnpm i
+	pnpm install --filter=.

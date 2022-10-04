@@ -1,7 +1,11 @@
 .PHONY: build
-build: 
+build: pnpm
 	echo "nothing to see here"
 
 .PHONY: test
-test: 
+test: pnpm
 	pnpm test
+
+.PHONY: pnpm
+pnpm:
+	pnpm install --filter=.
