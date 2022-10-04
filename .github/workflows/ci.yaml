@@ -59,8 +59,8 @@ jobs:
         with:
           cache: "pnpm"
 
-      - name: Install dependencies
-        run: pnpm install
+      - name: Install pnpm workspace dependencies
+        run: pnpm install --filter=app
 
       - name: Build
         shell: bash
