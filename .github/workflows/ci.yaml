@@ -1,4 +1,4 @@
-name: build
+name: monobuild-build
 
 on: push
 
@@ -47,7 +47,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -69,15 +69,3 @@ jobs:
       - name: Test
         shell: bash
         run: cd ${{ matrix.packages }} && make test
-
-  # done:
-  #   # This step does nothing, but allows us to block merges until this is
-  #   # finished.  We can't easily block merges on the dynamic steps above,
-  #   # so this lets us do that.
-  #   needs:
-  #     - build
-  #   if: ${{ always() && (contains(join(needs.*.result, ','), 'success') || contains(join(needs.*.result, ','), 'skipped')) }}
-  #   runs-on: ubuntu-20.04
-  #   steps:
-  #     - name: "Do nothing"
-  #       run: echo "Done"
