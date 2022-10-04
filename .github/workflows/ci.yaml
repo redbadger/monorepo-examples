@@ -1,37 +1,73 @@
-name: CI
+name: build
 
-on:
-  push:
-    branches: ["*"]
+on: push
 
 jobs:
-  build:
-    name: Build and Test
-    timeout-minutes: 15
-    runs-on: ubuntu-latest
-    # To use Remote Caching, uncomment the next lines and follow the steps below.
-    env:
-     TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-     TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  what-changed:
+    # This step figures out what needs to be built in the repository,
+    # based on what's changed and what packages depend on what's changed.
 
+    runs-on: ubuntu-20.04
+    outputs:
+      packages: ${{ steps.set-matrix.outputs.packages }}
     steps:
-      - name: Check out code
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - id: set-matrix
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
+        run: |
+          if [ "$BRANCH_NAME" == "turborepo/main" ]; then
+            # Main branch mode
+            schedule=$(go run github.com/charypar/monobuild@latest diff --main-branch --rebuild-strong)
+          else
+            # Feature branch mode
+            schedule=$(go run github.com/charypar/monobuild@latest diff --base-branch origin/turborepo/main --rebuild-strong)
+          fi
+          dependencies=$(echo "$schedule" | awk 'BEGIN { FS = ":" } ; { print $1 }' | grep -v "workloads/" || true)
+          packages=$(echo \"$dependencies\" | jq -c 'split(" ")')
+          echo "Packages: $packages"
+          echo "::set-output name=packages::$packages"
+  build:
+    # This step takes all the packages that have changed and runs
+    # a build for each of those packages.
+    #
+    # This step will defer to the `ci` target of a `Makefile` in the
+    # given package directory, which allows each package to determine
+    # how it should be built.
+
+    needs: what-changed
+    if: ${{ needs.what-changed.outputs.packages != '[]'}}
+    strategy:
+      fail-fast: false
+      matrix:
+        packages: ${{ fromJson(needs.what-changed.outputs.packages) }}
+    permissions:
+      id-token: write
+      contents: read
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repo
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-
-      - uses: pnpm/action-setup@v2.2.2
-
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3.5.0
-        with:
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install
 
       - name: Build
-        run: pnpm build
+        shell: bash
+        run: cd ${{ matrix.packages }} && make build
 
       - name: Test
-        run: pnpm test
+        shell: bash
+        run: cd ${{ matrix.packages }} && make test
+
+  # done:
+  #   # This step does nothing, but allows us to block merges until this is
+  #   # finished.  We can't easily block merges on the dynamic steps above,
+  #   # so this lets us do that.
+  #   needs:
+  #     - build
+  #   if: ${{ always() && (contains(join(needs.*.result, ','), 'success') || contains(join(needs.*.result, ','), 'skipped')) }}
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - name: "Do nothing"
+  #       run: echo "Done"
