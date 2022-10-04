@@ -59,6 +59,9 @@ jobs:
         with:
           cache: "pnpm"
 
+      - name: Install dependencies
+        run: pnpm install
+
       - name: Build
         shell: bash
         run: cd ${{ matrix.packages }} && make build
