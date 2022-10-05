@@ -4,7 +4,7 @@ import Todos from './todos';
 
 describe('Todos', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Todos />);
+    const { baseElement } = render(<Todos todos={[]} />);
     expect(baseElement).toBeTruthy();
   });
 });
