@@ -13,7 +13,7 @@ if [[ ! -e "Dockerfile" ]]; then
 	exit 1
 fi
 
-REGISTRY_URL=${REGISTRY_URL:=ghcr.io/redbadger}
+REGISTRY_URL=${REGISTRY_URL}
 
 echo "Using registry $REGISTRY_URL"
 
