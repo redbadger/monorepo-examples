@@ -72,18 +72,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      # We re-run the full build for each env, with the expectation that
-      # docker will have cached the output from the first env so we won't
-      # _actually_ do anything.
-      - name: Run CI for dev
-        uses: ./.github/actions/build-and-push
-        with:
-          docker-username: redbadger
-          docker-registry: ghcr.io/redbadger
-          docker-password: ${{ env.DOCKER_PASSWORD }}
-          project-path: ${{ matrix.packages }}
-          should-cache: "true"
-
       - uses: pnpm/action-setup@v2.2.2
 
       - name: Setup Node.js environment
@@ -94,10 +82,14 @@ jobs:
       - name: Install pnpm workspace dependencies
         run: pnpm install --filter=app
 
-      - name: Build
-        shell: bash
-        run: cd ${{ matrix.packages }} && make build
-
-      - name: Test
-        shell: bash
-        run: cd ${{ matrix.packages }} && make test
+            # We re-run the full build for each env, with the expectation that
+      # docker will have cached the output from the first env so we won't
+      # _actually_ do anything.
+      - name: Run CI for dev
+        uses: ./.github/actions/build-and-push
+        with:
+          docker-username: redbadger
+          docker-registry: ghcr.io/redbadger
+          docker-password: ${{ env.DOCKER_PASSWORD }}
+          project-path: ${{ matrix.packages }}
+          should-cache: "true"
