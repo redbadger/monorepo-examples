@@ -68,9 +68,9 @@ function image_exists() {
     if [ $exit_code = 0 ]; then
         # remove pulled image
         docker rmi $1 >/dev/null 2>&1
-        return true
+        return 1
     else
-        return false
+        return 0
     fi
 }
 
