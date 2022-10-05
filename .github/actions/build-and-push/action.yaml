@@ -14,7 +14,7 @@ runs:
     - name: Login to Docker Hub
       uses: docker/login-action@v2
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        username: redbadger
         password: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Build & Push
