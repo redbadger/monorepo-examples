@@ -57,6 +57,7 @@ jobs:
     env:
      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+     DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Expose GitHub runtime env vars
         # This step exposes env vars required for docker layer caching
@@ -77,6 +78,8 @@ jobs:
       - name: Run CI for dev
         uses: ./.github/actions/build-and-push
         with:
+          docker-username: redbadger
+          docker-password: ${{ env.DOCKER_PASSWORD }}
           project-path: ${{ matrix.packages }}
           should-cache: "true"
 
