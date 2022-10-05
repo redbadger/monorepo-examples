@@ -12,4 +12,4 @@ pnpm:
 
 .PHONY: ci
 ci:
-	make build
+	echo "TODO: Dockerize"

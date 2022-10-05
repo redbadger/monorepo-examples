@@ -74,14 +74,6 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.2
 
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3.5.0
-        with:
-          cache: "pnpm"
-
-      - name: Install pnpm workspace dependencies
-        run: pnpm install --filter=app
-
             # We re-run the full build for each env, with the expectation that
       # docker will have cached the output from the first env so we won't
       # _actually_ do anything.
