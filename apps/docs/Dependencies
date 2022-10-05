@@ -1,3 +1,3 @@
 packages/eslint-config-custom
-!packages/hello-world-api
+!apps/hello-world-api
 packages/ui
