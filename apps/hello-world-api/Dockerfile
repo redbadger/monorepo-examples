@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
   pkg-config \
   libssl-dev
 
-WORKDIR /src
+WORKDIR /
 
 COPY . .
 
@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN useradd svc
 
-COPY --from=build /src/target/release/hello-world-api /
+COPY --from=build /target/release/hello-world-api /
 
 RUN chown -R svc /hello-world-api
 USER svc
