@@ -3,20 +3,82 @@ name: build
 on: push
 
 jobs:
+  what-changed:
+    # This step figures out what needs to be built in the repository,
+    # based on what's changed and what packages depend on what's changed.
+
+    runs-on: ubuntu-20.04
+    outputs:
+      packages: ${{ steps.set-matrix.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - id: set-matrix
+        env:
+          BRANCH_NAME: ${{ github.ref_name }}
+        run: |
+          if [ "$BRANCH_NAME" == "monobuild-main" ]; then
+            # Main branch mode
+            schedule=$(go run github.com/charypar/monobuild@latest diff --main-branch --rebuild-strong)
+          else
+            # Feature branch mode
+            schedule=$(go run github.com/charypar/monobuild@latest diff --base-branch origin/monobuild-main --rebuild-strong)
+          fi
+          dependencies=$(echo "$schedule" | awk 'BEGIN { FS = ":" } ; { print $1 }')
+          packages=$(echo \"$dependencies\" | jq -c 'split(" ")')
+          echo "Packages: $packages"
+          echo "::set-output name=packages::$packages"
   build:
-    name: Build and Test
-    timeout-minutes: 15
-    runs-on: ubuntu-latest
-    # To use Remote Caching, uncomment the next lines and follow the steps below.
+    # This step takes all the packages that have changed and runs
+    # a build for each of those packages.
+    #
+    # This step will defer to the `ci` target of a `Makefile` in the
+    # given package directory, which allows each package to determine
+    # how it should be built.
+    #
+    #
+    # The expectation is that library packages will have no output and
+    # service packages will output a docker image
+
+    needs: what-changed
+    if: ${{ needs.what-changed.outputs.packages != '[]'}}
+    strategy:
+      fail-fast: false
+      matrix:
+        packages: ${{ fromJson(needs.what-changed.outputs.packages) }}
+    permissions:
+      id-token: write
+      contents: read
+    outputs:
+      dockerShas: ${{ toJson(steps) }}
+    runs-on: ubuntu-22.04
     env:
      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-
     steps:
-      - name: Check out code
+      - name: Expose GitHub runtime env vars
+        # This step exposes env vars required for docker layer caching
+        uses: crazy-max/ghaction-github-runtime@v1
+
+      - name: Set up Docker Buildx
+        # Starts a buildx daemon with the `docker-container` engine, which
+        # is also required for docker layer caching.
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Checkout repo
         uses: actions/checkout@v2
+
+      # We re-run the full build for each env, with the expectation that
+      # docker will have cached the output from the first env so we won't
+      # _actually_ do anything.
+      - name: Run CI for dev
+        uses: ./.github/actions/build-and-push
         with:
-          fetch-depth: 2
+          project-path: ${{ matrix.packages }}
+          should-cache: "true"
 
       - uses: pnpm/action-setup@v2.2.2
 
@@ -25,11 +87,13 @@ jobs:
         with:
           cache: "pnpm"
 
-      - name: Install dependencies
-        run: pnpm install
+      - name: Install pnpm workspace dependencies
+        run: pnpm install --filter=app
 
       - name: Build
-        run: pnpm build
+        shell: bash
+        run: cd ${{ matrix.packages }} && make build
 
       - name: Test
-        run: pnpm test
+        shell: bash
+        run: cd ${{ matrix.packages }} && make test

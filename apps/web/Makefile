@@ -13,3 +13,7 @@ dev: pnpm
 .PHONY: pnpm
 pnpm:
 	pnpm install --filter=$(shell cat package.json | jq -r .name)...
+
+.PHONY: ci
+pnpm:
+	make build
