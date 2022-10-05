@@ -1,10 +1,11 @@
 import * as express from 'express';
+import { faker } from '@faker-js/faker';
 import { addTodoRoutes } from './app/todos';
 
 const app = express();
 
 app.get('/api', (req, res) => {
-  res.send({ message: 'Welcome to api!' });
+  res.send({ message: 'Welcome to api!' + faker.name.firstName() });
 });
 addTodoRoutes(app);
 

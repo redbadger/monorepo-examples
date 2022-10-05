@@ -55,5 +55,6 @@
       }
     }
   },
-  "defaultProject": "todos"
+  "defaultProject": "todos",
+  "plugins": ["@nxrs/cargo"]
 }
