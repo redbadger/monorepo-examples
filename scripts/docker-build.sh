@@ -13,9 +13,14 @@ if [[ ! -e "Dockerfile" ]]; then
 	exit 1
 fi
 
+if [ -z ${REGISTRY_URL+x} ]; then
+	echo "REGISTRY_URL is a required environment variable"
+	exit 1
+fi
+
 REGISTRY_URL=${REGISTRY_URL}
 
-echo "Using registry $REGISTRY_URL"
+echo "Using registry \"$REGISTRY_URL\""
 
 SERVICE_PATH=$(git rev-parse --show-prefix)
 SERVICE_PATH=${SERVICE_PATH%/}
@@ -72,10 +77,10 @@ function image_exists() {
 if [[ "$SHOULD_PUSH" = "true" ]]; then
 	ADDITIONAL_DOCKER_ARGS+=(--push)
 
-	if image_exists(); then
-		echo "$DOCKER_URL already exists in the docker registry.  Skipping the build"
-		exit 0
-	fi
+	if image_exists $DOCKER_URL; then
+        echo "$DOCKER_URL already exists in the docker registry.  Skipping the build"
+        exit 0
+    fi
 fi
 
 echo "Building $SERVICE_NAME"
