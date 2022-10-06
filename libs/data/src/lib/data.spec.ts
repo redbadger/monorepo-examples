@@ -2,6 +2,6 @@ import { data } from './data';
 
 describe('data', () => {
   it('should work', () => {
-    expect(data()).toEqual('data');
+    expect(data()).toEqual('information');
   });
 });

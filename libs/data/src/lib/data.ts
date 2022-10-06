@@ -1,5 +1,5 @@
 export function data(): string {
-  return 'data';
+  return 'information';
 }
 
 export interface Todo {
