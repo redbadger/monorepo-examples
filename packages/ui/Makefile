@@ -12,4 +12,4 @@ pnpm:
 
 .PHONY: ci
 ci:
-	echo "TODO: Dockerize"
+	echo "nothing to see here"

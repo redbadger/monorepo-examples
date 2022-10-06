@@ -39,7 +39,6 @@ jobs:
     # given package directory, which allows each package to determine
     # how it should be built.
     #
-    #
     # The expectation is that library packages will have no output and
     # service packages will output a docker image
 
@@ -75,7 +74,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2.2.2
 
-            # We re-run the full build for each env, with the expectation that
+      # We re-run the full build for each env, with the expectation that
       # docker will have cached the output from the first env so we won't
       # _actually_ do anything.
       - name: Run CI for dev
