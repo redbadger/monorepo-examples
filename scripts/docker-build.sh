@@ -45,7 +45,7 @@ fi
 
 # JS builds need some top-level files.  Since they're not very big
 # we include them in all builds.
-JS_FILES=(package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json .prettierrc.json)
+ROOT_FILES=(package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json .prettierrc.json .gitignore .npmrc .pnpmfile.cjs)
 
 ADDITIONAL_DOCKER_ARGS=()
 
@@ -83,8 +83,9 @@ if [[ "$SHOULD_PUSH" = "true" ]]; then
     fi
 fi
 
+# Build up the Docker context including only projects that monobuild deems Dependencies of this service
 echo "Building $SERVICE_NAME"
-echo "Dependencies $DEPENDENCIES"
+echo "Dependencies: $DEPENDENCIES"
 
-$TAR -c --exclude-vcs-ignores -C $REPO_ROOT "${JS_FILES[@]}" $DEPENDENCIES |
+$TAR -c --exclude-vcs-ignores -C $REPO_ROOT "${ROOT_FILES[@]}" $DEPENDENCIES |
 	docker buildx build - -t $DOCKER_URL -f $SERVICE_PATH/Dockerfile ${ADDITIONAL_DOCKER_ARGS[@]+"${ADDITIONAL_DOCKER_ARGS[@]}"}

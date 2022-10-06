@@ -16,4 +16,4 @@ pnpm:
 
 .PHONY: ci
 ci:
-	echo "TODO: Dockerize"
+	$(shell git rev-parse --show-toplevel)/scripts/docker-build.sh
