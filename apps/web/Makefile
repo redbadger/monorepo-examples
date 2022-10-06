@@ -15,5 +15,5 @@ pnpm:
 	pnpm install --filter=$(shell cat package.json | jq -r .name)...
 
 .PHONY: ci
-pnpm:
-	echo "TODO: Dockerize"
+ci:
+	$(shell git rev-parse --show-toplevel)/scripts/docker-build.sh

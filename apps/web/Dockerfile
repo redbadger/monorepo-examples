@@ -4,7 +4,7 @@ RUN apk update
 WORKDIR /app
 RUN corepack enable
 COPY . .
-RUN pnpm --package=turbo dlx turbo prune --scope=docs --docker
+RUN pnpm --package=turbo dlx turbo prune --scope=web --docker
 RUN rm -rf /app/out/full/*/*/node_modules
 
 # Add lockfile and package.json's of isolated subworkspace
@@ -22,9 +22,9 @@ RUN pnpm install
 
 # Build the project
 COPY turbo.json turbo.json
-RUN pnpm turbo run build --filter=docs...
-RUN pnpm turbo run lint --filter=docs
-RUN pnpm turbo run test --filter=docs
+RUN pnpm turbo run build --filter=web...
+RUN pnpm turbo run lint --filter=web
+RUN pnpm turbo run test --filter=web
 
 FROM node:16-alpine AS runner
 WORKDIR /app
@@ -39,7 +39,7 @@ USER nextjs
 
 # Automatically leverage output traces to reduce image size 
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=installer --chown=nextjs:nodejs /app/apps/docs/.next/standalone ./
-COPY --from=installer --chown=nextjs:nodejs /app/apps/docs/.next/static ./.next/static
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=installer --chown=nextjs:nodejs /app/apps/web/.next/static ./.next/static
 
-CMD node apps/docs/server.js
+CMD node apps/web/server.js
