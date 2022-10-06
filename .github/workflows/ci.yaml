@@ -25,7 +25,7 @@ jobs:
             schedule=$(go run github.com/charypar/monobuild@latest diff --main-branch --rebuild-strong)
           else
             # Feature branch mode
-            schedule=$(go run github.com/charypar/monobuild@latest diff --base-branch origin/$(BRANCH_NAME_MAIN) --rebuild-strong)
+            schedule=$(go run github.com/charypar/monobuild@latest diff --base-branch origin/$BRANCH_NAME_MAIN --rebuild-strong)
           fi
           dependencies=$(echo "$schedule" | awk 'BEGIN { FS = ":" } ; { print $1 }')
           packages=$(echo \"$dependencies\" | jq -c 'split(" ")')
