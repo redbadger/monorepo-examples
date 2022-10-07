@@ -61,17 +61,7 @@ REPO_ROOT=$(git rev-parse --show-toplevel)
 SHOULD_PUSH="${DOCKER_BUILD_SHOULD_PUSH:-$CI}"
 
 function image_exists() {
-    # pull image
-    docker pull $1 >/dev/null 2>&1
-    # save exit code
-    exit_code=$?
-    if [ $exit_code = 0 ]; then
-        # remove pulled image
-        docker rmi $1 >/dev/null 2>&1
-        return 1
-    else
-        return 0
-    fi
+    docker image inspect $1 >/dev/null 2>&1
 }
 
 if [[ "$SHOULD_PUSH" = "true" ]]; then
