@@ -26,7 +26,7 @@ runs:
         registry: ${{ inputs.docker-registry }}
         username: ${{ inputs.docker-username }}
         password: ${{ inputs.docker-password }}
-        logout: true
+        logout: false
         
     - name: Build & Push
       shell: bash
