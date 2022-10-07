@@ -51,6 +51,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
+      packages: write
     outputs:
       dockerShas: ${{ toJson(steps) }}
     runs-on: ubuntu-22.04
