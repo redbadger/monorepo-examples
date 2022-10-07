@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /
 
-COPY . .
+COPY apps/hello-world-api .
 
 RUN rustup component add rustfmt && \
   cargo fmt -- --check
