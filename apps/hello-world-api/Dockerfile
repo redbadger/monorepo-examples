@@ -10,13 +10,13 @@ WORKDIR /
 
 COPY apps/hello-world-api .
 
-RUN rustup component add rustfmt && \
-  cargo fmt -- --check
+RUN rustup component add rustfmt
 
-RUN \
-  cargo build \
-  --release && \
-  cargo test --release
+RUN cargo fmt -- --check
+
+RUN cargo build --release
+
+RUN cargo test --release
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 FROM debian:buster-slim
@@ -32,6 +32,8 @@ COPY --from=build /target/release/hello-world-api /
 
 RUN chown -R svc /hello-world-api
 USER svc
+
+EXPOSE 8080
 
 ENTRYPOINT ["/usr/bin/tini", "--"]
 
