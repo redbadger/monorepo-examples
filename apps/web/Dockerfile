@@ -5,6 +5,7 @@ WORKDIR /app
 RUN corepack enable
 COPY . .
 RUN pnpm --package=turbo dlx turbo prune --scope=web --docker
+# See https://github.com/vercel/turborepo/issues/1997#issuecomment-1271372326
 RUN rm -rf /app/out/full/*/*/node_modules
 
 # Add lockfile and package.json's of isolated subworkspace
@@ -17,11 +18,11 @@ WORKDIR /app
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-COPY --from=builder /app/out/full/ .
 RUN pnpm install
 
 # Build the project
 COPY turbo.json turbo.json
+COPY --from=builder /app/out/full/ .
 RUN pnpm turbo run build --filter=web...
 RUN pnpm turbo run lint --filter=web
 RUN pnpm turbo run test --filter=web
