@@ -11,7 +11,7 @@ jobs:
     outputs:
       packages: ${{ steps.set-matrix.outputs.packages }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -71,14 +71,14 @@ jobs:
         uses: docker/setup-buildx-action@v1
 
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - uses: pnpm/action-setup@v2.2.2
 
-      # We re-run the full build for each env, with the expectation that
-      # docker will have cached the output from the first env so we won't
+      # We would re-run the full build for each env, but given the fact that
+      # docker will have cached the output from the first run, we won't
       # _actually_ do anything.
-      - name: Run CI for dev
+      - name: Run CI
         uses: ./.github/actions/build-and-push
         with:
           docker-username: redbadger
