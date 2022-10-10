@@ -78,4 +78,4 @@ echo "Building $SERVICE_NAME"
 echo "Dependencies: $DEPENDENCIES"
 
 $TAR -c --exclude-vcs-ignores -C $REPO_ROOT "${ROOT_FILES[@]}" $DEPENDENCIES |
-	docker buildx build - -t $DOCKER_URL -f $SERVICE_PATH/Dockerfile ${ADDITIONAL_DOCKER_ARGS[@]+"${ADDITIONAL_DOCKER_ARGS[@]}"}
+	docker buildx build --secret id=turbo-team,env=TURBO_TEAM --secret id=turbo-token,env=TURBO_TOKEN - -t $DOCKER_URL -f $SERVICE_PATH/Dockerfile ${ADDITIONAL_DOCKER_ARGS[@]+"${ADDITIONAL_DOCKER_ARGS[@]}"}

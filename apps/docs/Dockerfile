@@ -23,9 +23,9 @@ RUN pnpm install
 # Build the project
 COPY turbo.json turbo.json
 COPY --from=builder /app/out/full/ .
-RUN pnpm turbo run build --filter=docs...
-RUN pnpm turbo run lint --filter=docs
-RUN pnpm turbo run test --filter=docs
+RUN pnpm --mount=type=secret,id=turbo-team --mount=type=secret,id=turbo-token turbo run build --filter=docs...
+RUN pnpm --mount=type=secret,id=turbo-team --mount=type=secret,id=turbo-token turbo run lint --filter=docs
+RUN pnpm --mount=type=secret,id=turbo-team --mount=type=secret,id=turbo-token turbo run test --filter=docs
 
 FROM node:16-alpine AS runner
 WORKDIR /app

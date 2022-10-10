@@ -17,6 +17,12 @@ inputs:
     description: "Whether this run should write to the GHA cache"
     required: false
     default: "true"
+  turbo-team:
+    description: "The team for the Turborepo remote cache"
+    required: false
+  turbo-token:
+    description: "The token for the Turborepo remote cache"
+    required: false
 runs:
   using: 'composite'
   steps:
@@ -32,5 +38,7 @@ runs:
       shell: bash
       run: cd ${{ matrix.packages }} && make ci
       env:
-        SHOULD_CACHE: ${{ inputs.should-cache }}
         REGISTRY_URL: ${{ inputs.docker-registry }}
+        SHOULD_CACHE: ${{ inputs.should-cache }}
+        TURBO_TEAM: ${{ inputs.turbo-team }}
+        TURBO_TOKEN: ${{ inputs.turbo-token }}
