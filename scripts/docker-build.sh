@@ -76,6 +76,12 @@ fi
 # Build up the Docker context including only projects that monobuild deems Dependencies of this service
 echo "Building $SERVICE_NAME"
 echo "Dependencies: $DEPENDENCIES"
+if [ -n ${TURBO_TEAM+x} ]; then
+	echo "Turbo team: *****"
+fi
+if [ -n ${TURBO_TOKEN+x} ]; then
+	echo "Turbo token: *****"
+fi
 
 $TAR -c --exclude-vcs-ignores -C $REPO_ROOT "${ROOT_FILES[@]}" $DEPENDENCIES |
 	docker buildx build --secret id=turbo-team,env=TURBO_TEAM --secret id=turbo-token,env=TURBO_TOKEN - -t $DOCKER_URL -f $SERVICE_PATH/Dockerfile ${ADDITIONAL_DOCKER_ARGS[@]+"${ADDITIONAL_DOCKER_ARGS[@]}"}

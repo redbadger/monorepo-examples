@@ -23,9 +23,19 @@ RUN pnpm install
 # Build the project
 COPY turbo.json turbo.json
 COPY --from=builder /app/out/full/ .
-RUN --mount=type=secret,id=turbo-team --mount=type=secret,id=turbo-token pnpm turbo run build --filter=web...
-RUN --mount=type=secret,id=turbo-team --mount=type=secret,id=turbo-token pnpm turbo run lint --filter=web
-RUN --mount=type=secret,id=turbo-team --mount=type=secret,id=turbo-token pnpm turbo run test --filter=web
+RUN --mount=type=secret,id=turbo-team --mount=type=secret,id=turbo-token \
+    --mount=type=secret,id=turbo-team --mount=type=secret,id=turbo-token \
+    TURBO_TEAM="$(cat /run/secrets/turbo-team)" \
+    TURBO_TOKEN="$(cat /run/secrets/turbo-token)" \
+    pnpm turbo run build --filter=web...
+RUN --mount=type=secret,id=turbo-team --mount=type=secret,id=turbo-token \
+    TURBO_TEAM="$(cat /run/secrets/turbo-team)" \
+    TURBO_TOKEN="$(cat /run/secrets/turbo-token)" \
+    pnpm turbo run lint --filter=web
+RUN --mount=type=secret,id=turbo-team --mount=type=secret,id=turbo-token \
+    TURBO_TEAM="$(cat /run/secrets/turbo-team)" \
+    TURBO_TOKEN="$(cat /run/secrets/turbo-token)" \
+    pnpm turbo run test --filter=web
 
 FROM node:16-alpine AS runner
 WORKDIR /app
