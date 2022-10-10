@@ -68,7 +68,7 @@ jobs:
         # Starts a buildx daemon with the `docker-container` engine, which
         # is also required for docker layer caching.
         id: buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -86,3 +86,5 @@ jobs:
           docker-password: ${{ env.DOCKER_PASSWORD }}
           project-path: ${{ matrix.packages }}
           should-cache: "true"
+          turbo-team: ${{ env.TURBO_TEAM }}
+          turbo-token: ${{ env.TURBO_TOKEN }}
