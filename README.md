@@ -9,7 +9,7 @@ This repo uses [pnpm](https://pnpm.io) as a package manager. It includes the fol
 ### Apps and Packages
 
 - `docs`: a [Next.js](https://nextjs.org) app
-- `hello-world-api`: a [Rust](https://www.rust-lang.org/) service depended upon by `docs`
+- `hello-world-api`: a [Rust](https://www.rust-lang.org/) service with a depended upon by `docs`
 - `web`: another [Next.js](https://nextjs.org) app
 - `ui`: a stub React component library shared by both `web` and `docs` applications
 - `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
@@ -41,17 +41,17 @@ OR
 
 ### Control over distributed task execution
 
-At the time of writing, `turborepo` support parallelizing task executing in a single process, ut does not yet support distributing tasks across many nodes, which would be useful in CI both to speed us task runs and to make task logs easier to debug when a something fails.
+At the time of writing, `turborepo` supports parallelizing task executing in a single process, but does not yet support distributing tasks across many machines, which would be useful in CI both to speed us task runs and to make task logs easier to debug when something fails.
 
 In this POC, we use `monobuild` to generate a build schedule which we then put into a [matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) so that each app or package gets its own build job as per the image below:
 
-![GitHub actions matrix screenshot](https://file%2B.vscode-resource.vscode-cdn.net/Users/jennifersharps/code/monorepo-examples/docs/github-actions-matrix.png?version%3D1665413554522)
+![GitHub actions matrix screenshot](./docs/images/github-actions-matrix.png)
 
 In the above example, you can tell at a glance that the there is a problem with the `apps/hello-world-api`.
 
 Without using the matrix, the build would look like the below image:
 
-![GitHub actions without matrix](https://file%2B.vscode-resource.vscode-cdn.net/var/folders/q8/zqvhsjcx2gd_48hhrk848jgc0000gn/T/TemporaryItems/NSIRD_screencaptureui_xgqfMm/Screenshot%202022-10-10%20at%2015.55.46.png?version%3D1665413763893)
+![GitHub actions without matrix](./docs/images/github-actions-without-matrix.png)
 
 There's no easy way to understand what failed at a glance; we'd have to click through to the logs in order to know what actually went wrong.  This is not ideal.
 
