@@ -19,12 +19,12 @@ jobs:
         env:
           BRANCH_NAME: ${{ github.ref_name }}
         run: |
-          if [ "$BRANCH_NAME" == "monobuild-main" ]; then
+          if [ "$BRANCH_NAME" == "monobuild" ]; then
             # Main branch mode
             schedule=$(go run github.com/charypar/monobuild@latest diff --main-branch --rebuild-strong)
           else
             # Feature branch mode
-            schedule=$(go run github.com/charypar/monobuild@latest diff --base-branch origin/monobuild-main --rebuild-strong)
+            schedule=$(go run github.com/charypar/monobuild@latest diff --base-branch origin/monobuild --rebuild-strong)
           fi
           dependencies=$(echo "$schedule" | awk 'BEGIN { FS = ":" } ; { print $1 }')
           packages=$(echo \"$dependencies\" | jq -c 'split(" ")')
