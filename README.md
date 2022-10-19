@@ -37,3 +37,7 @@ Examples have been created as separate branches in this repo.  The intention is 
 ### Turborepo with Rust
 
 - [`turborepo-rust`](https://github.com/redbadger/monorepo-examples/tree/turborepo-rust): example of a monorepo built with Turborepo, including an example Rust lib
+
+## CI
+
+The examples use GitHub Actions for CI; see [Actions](https://github.com/redbadger/monorepo-examples/actions) to examine the workflows triggered by the example branches
