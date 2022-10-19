@@ -40,4 +40,6 @@ Examples have been created as separate branches in this repo.  The intention is 
 
 ## CI
 
-The examples use GitHub Actions for CI; see [Actions](https://github.com/redbadger/monorepo-examples/actions) to examine the workflows triggered by the example branches
+The examples use GitHub Actions for CI; see [Actions](https://github.com/redbadger/monorepo-examples/actions) to examine the workflows triggered by the example branches.
+
+Note: for the tools which work by building only affected changes as compared to a "main" branch, the most useful workflows to examine will be those suffixed with `_effect`.
