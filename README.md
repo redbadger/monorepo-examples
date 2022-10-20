@@ -29,9 +29,9 @@ While `turborepo`'s source of truth for building a dependency tree is the `packa
 
 With `monobuild`, we tend to use the `Makefile` to execute tasks (though we can use anything we want to), whereas with `turborepo`, you must use scripts declared in `package.json` files, and the task execution schedule is built intelligently based on the pipeline defined in the root `turbo.json`.  It becomes confusing to know when to use which.
 
-In this repo, the `Makefile`s contain commands to facilitate launching apps and services in a more ad-hoc manner, which is to say that there is not a tool implemented in this POC that builds a dependency tree and executes all matching targets in a `Makefile` the way that turborepo runs all matching scripts in a `package.json`. This may or may not be a problem.
+In this repo, the `Makefile`s contain commands to facilitate launching apps and services in a more ad-hoc manner, which is to say that there is not a tool implemented in this example that builds a dependency tree and executes all matching targets in a `Makefile` the way that turborepo runs all matching scripts in a `package.json`. This may or may not be a problem.
 
-It is worth mentioning that while it might be fairly simple to build a small abstraction using `monobuild` to provide a common, language-agnostic interface for developers while continuing to benefit from the features `turborepo` provides by delegating any JS tasks to it (which is how we've enabled the CI workflow in this POC), there does seem to be contention between `monobuild` and `turborepo` in that they both solve similar problems in different ways. While it is possible to generate a build schedule using `monobuild`, and to use that schedule to execute individual `turborepo` tasks, that is being accomplished by running "filtered" `turbo` commands from the root of the monorepo. Ideally, in the future, we could either:
+It is worth mentioning that while it might be fairly simple to build a small abstraction using `monobuild` to provide a common, language-agnostic interface for developers while continuing to benefit from the features `turborepo` provides by delegating any JS tasks to it (which is how we've enabled the CI workflow in this example), there does seem to be contention between `monobuild` and `turborepo` in that they both solve similar problems in different ways. While it is possible to generate a build schedule using `monobuild`, and to use that schedule to execute individual `turborepo` tasks, that is being accomplished by running "filtered" `turbo` commands from the root of the monorepo. Ideally, in the future, we could either:
 
 - Use turborepo to generate its own build schedule instead of combining it with `monobuild`. There will be a `--plan` flag in the future to facilitate this, and it's probably possible to do now using the `--dry=json` argument, but it doesn't answer the question of how to handle non-JS code.  See [`turborepo-rust`](https://github.com/redbadger/monorepo-examples/tree/turborepo-rust) for a potential answer to that question.
 
@@ -43,7 +43,7 @@ OR
 
 At the time of writing, `turborepo` supports parallelizing task executing in a single process, but does not yet support distributing tasks across many machines, which would be useful in CI both to speed us task runs and to make task logs easier to debug when something fails.
 
-In this POC, we use `monobuild` to generate a build schedule which we then put into a [matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) so that each app or package gets its own build job as per the image below:
+In this example, we use `monobuild` to generate a build schedule which we then put into a [matrix](https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs) so that each app or package gets its own build job as per the image below:
 
 ![GitHub actions matrix screenshot](./docs/images/github-actions-matrix.png)
 
@@ -89,7 +89,7 @@ This repo has some additional tools from the JS ecosystem already setup for you:
 
 Turborepo can use a technique known as [Remote Caching](https://turborepo.org/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
 
-By default, Turborepo will cache locally. Remote Caching has been enabled with Vercel for this POC. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands to set things up locally:
+By default, Turborepo will cache locally. Remote Caching has been enabled with Vercel for this example. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands to set things up locally:
 
 ```bash
 pnpm dlx turbo login
